@@ -126,9 +126,6 @@ importers:
       chardet:
         specifier: ^2.1.1
         version: 2.1.1
-      chokidar:
-        specifier: ^4.0.3
-        version: 4.0.3
       chrome-devtools-mcp:
         specifier: ^0.8.1
         version: 0.8.1
