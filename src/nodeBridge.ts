@@ -1589,6 +1589,23 @@ class NodeHandlerRegistry {
       };
     });
 
+    this.messageBus.registerHandler('session.config.get', async (data) => {
+      const { cwd, sessionId, key } = data;
+      const context = await this.getContext(cwd);
+      const sessionConfigManager = new SessionConfigManager({
+        logPath: context.paths.getSessionLogPath(sessionId),
+      });
+      const value = key
+        ? (sessionConfigManager.config as any)[key]
+        : sessionConfigManager.config;
+      return {
+        success: true,
+        data: {
+          value,
+        },
+      };
+    });
+
     this.messageBus.registerHandler('session.config.remove', async (data) => {
       const { cwd, sessionId, key } = data;
       const context = await this.getContext(cwd);
