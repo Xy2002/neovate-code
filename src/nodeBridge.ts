@@ -1912,6 +1912,34 @@ class NodeHandlerRegistry {
         };
       }
     });
+
+    this.messageBus.registerHandler('utils.open', async (data) => {
+      const { cwd, app } = data;
+      const { spawn } = await import('child_process');
+
+      const commands: Record<string, { cmd: string; args: string[] }> = {
+        cursor: { cmd: 'cursor', args: [cwd] },
+        vscode: { cmd: 'code', args: [cwd] },
+        'vscode-insiders': { cmd: 'code-insiders', args: [cwd] },
+        zed: { cmd: 'zed', args: [cwd] },
+        windsurf: { cmd: 'windsurf', args: [cwd] },
+        antigravity: { cmd: 'agy', args: [cwd] },
+        iterm: { cmd: 'open', args: ['-a', 'iTerm', cwd] },
+        warp: { cmd: 'open', args: ['-a', 'Warp', cwd] },
+        terminal: { cmd: 'open', args: ['-a', 'Terminal', cwd] },
+        finder: { cmd: 'open', args: [cwd] },
+        sourcetree: { cmd: 'open', args: ['-a', 'SourceTree', cwd] },
+      };
+
+      const config = commands[app];
+      const child = spawn(config.cmd, config.args, {
+        detached: true,
+        stdio: 'ignore',
+      });
+      child.unref();
+
+      return { success: true };
+    });
   }
 }
 

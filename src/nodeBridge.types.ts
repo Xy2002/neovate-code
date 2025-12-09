@@ -671,6 +671,23 @@ type UtilsToolExecuteBashOutput = {
   error?: { message: string };
 };
 
+type UtilsOpenInput = {
+  cwd: string;
+  sessionId?: string;
+  app:
+    | 'cursor'
+    | 'vscode'
+    | 'vscode-insiders'
+    | 'zed'
+    | 'windsurf'
+    | 'iterm'
+    | 'warp'
+    | 'terminal'
+    | 'antigravity'
+    | 'finder'
+    | 'sourcetree';
+};
+
 // ============================================================================
 // UI Bridge Handlers (from uiBridge.ts)
 // ============================================================================
@@ -875,6 +892,7 @@ export type HandlerMap = {
     input: UtilsToolExecuteBashInput;
     output: UtilsToolExecuteBashOutput;
   };
+  'utils.open': { input: UtilsOpenInput; output: SuccessResponse };
 
   // UI Bridge handlers
   toolApproval: { input: ToolApprovalInput; output: ToolApprovalOutput };
