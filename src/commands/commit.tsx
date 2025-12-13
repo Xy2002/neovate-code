@@ -1,6 +1,5 @@
 import clipboardy from 'clipboardy';
 import { Box, render, Text, useInput } from 'ink';
-import TextInput from '../ui/TextInput';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import type { Context } from '../context';
@@ -11,6 +10,7 @@ import {
   CommitActionSelector,
 } from '../ui/CommitActionSelector';
 import { CommitResultCard } from '../ui/CommitResultCard';
+import TextInput from '../ui/TextInput';
 
 // ============================================================================
 // Types
@@ -329,7 +329,7 @@ Please use the following commands to complete the merge:
   git status    # Check conflict status
   git commit    # Create merge commit
 
-Using neo commit would create an improper commit message
+Using commit command would create an improper commit message
 and may require re-resolving conflicts.`,
         });
         return;
