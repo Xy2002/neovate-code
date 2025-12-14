@@ -258,6 +258,7 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
 
     let retryCount = 0;
     const errorRetryTurns = opts.errorRetryTurns ?? DEFAULT_ERROR_RETRY_TURNS;
+    let reasoningProviderMetadata: any | undefined = undefined;
 
     while (retryCount <= errorRetryTurns) {
       if (opts.signal?.aborted) {
@@ -301,6 +302,11 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
             }
             case 'reasoning-delta':
               reasoning += chunk.delta;
+              break;
+            case 'reasoning-end':
+              if (chunk.providerMetadata) {
+                reasoningProviderMetadata = chunk.providerMetadata;
+              }
               break;
             case 'tool-call':
               toolCalls.push({
@@ -431,6 +437,9 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
       assistantContent.push({
         type: 'reasoning',
         text: reasoning,
+        ...(reasoningProviderMetadata && {
+          providerMetadata: reasoningProviderMetadata,
+        }),
       });
     }
     if (text) {

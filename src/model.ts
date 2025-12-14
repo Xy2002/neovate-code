@@ -1715,11 +1715,16 @@ export const providers: ProvidersMap = {
     name: 'Antigravity',
     doc: 'https://antigravity.google/',
     models: {
-      'gemini-2.5-pro': models['gemini-2.5-pro'],
+      'gemini-2.5-flash-lite': models['gemini-2.5-flash-lite-preview-06-17'],
       'gemini-2.5-flash': models['gemini-2.5-flash'],
+      'gemini-2.5-flash-thinking': models['gemini-2.5-flash'],
+      'gemini-2.5-pro': models['gemini-2.5-pro'],
       'gemini-3-pro-low': models['gemini-3-pro-preview'],
       'gemini-3-pro-high': models['gemini-3-pro-preview'],
+      'claude-sonnet-4-5': models['claude-4-5-sonnet'],
       'claude-sonnet-4-5-thinking': models['claude-4-5-sonnet'],
+      'claude-opus-4-5-thinking': models['claude-opus-4-5'],
+      'gpt-oss-120b-medium': models['gpt-oss-120b'],
     },
     async createModel(name, provider, options) {
       const apiKey = provider.options?.apiKey;
