@@ -1094,7 +1094,9 @@ export const createModelCreatorCompatible = (opts?: {
   };
 };
 
-export const defaultModelCreator = (
+export const defaultModelCreator = createModelCreatorCompatible();
+
+const openaiModelCreator = (
   name: string,
   provider: Provider,
 ): LanguageModelV2 => {
@@ -1207,7 +1209,7 @@ export const providers: ProvidersMap = {
       'gpt-5.2': models['gpt-5.2'],
       'gpt-5.2-pro': models['gpt-5.2-pro'],
     },
-    createModel: defaultModelCreator,
+    createModel: openaiModelCreator,
   },
   google: {
     id: 'google',
@@ -1431,7 +1433,7 @@ export const providers: ProvidersMap = {
       'glm-4.6': models['glm-4.6'],
       'qwen3-max': models['qwen3-max'],
     },
-    createModel: createModelCreatorCompatible(),
+    createModel: defaultModelCreator,
   },
   moonshotai: {
     id: 'moonshotai',
@@ -1707,7 +1709,7 @@ export const providers: ProvidersMap = {
       },
       'Grok-4.1-Fast': models['grok-4.1-fast'],
     },
-    createModel: createModelCreatorCompatible(),
+    createModel: defaultModelCreator,
   },
   antigravity: {
     id: 'antigravity',
