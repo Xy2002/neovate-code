@@ -37,6 +37,11 @@ Report any issues or ideas you encounter during dogfooding.
 - **Never leave PR or issue content empty** - Empty content will not trigger the DingTalk webhook notification (this is a known bug)
 - Provide clear description of what and why
 
+### Before Creating PR
+
+1. Run `pnpm run ready` to ensure all checks pass
+2. Use `neovate commit` to commit and push your changes
+
 ### Git Practices
 
 - **No force push** on shared branches
