@@ -14,6 +14,7 @@ import {
   PluginHookType,
   PluginManager,
 } from './plugin';
+import { antigravitySystemPromptPlugin } from './plugins/antigravitySystemPrompt';
 import { SkillManager } from './skill';
 
 type ContextOpts = {
@@ -104,7 +105,7 @@ export class Context {
       opts.argvConfig || {},
     );
     const initialConfig = configManager.config;
-    const buildInPlugins: Plugin[] = [];
+    const buildInPlugins: Plugin[] = [antigravitySystemPromptPlugin];
     const globalPlugins = scanPlugins(
       path.join(paths.globalConfigDir, 'plugins'),
     );
