@@ -1142,8 +1142,11 @@ class NodeHandlerRegistry {
         const diff = data.diff ?? (await getStagedDiff(cwd));
         const fileList = data.fileList ?? (await getStagedFileList(cwd));
 
-        // Return error if no staged changes
-        if (!diff || diff.length === 0) {
+        // Return error if no staged changes (both diff and fileList are empty)
+        if (
+          (!diff || diff.length === 0) &&
+          (!fileList || fileList.length === 0)
+        ) {
           return {
             success: false,
             error: 'No staged changes to commit',
