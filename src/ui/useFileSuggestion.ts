@@ -76,7 +76,7 @@ function useAtTriggeredPaths(inputState: InputState): MatchResult {
 
   // Find all @ mentions in the text (including quoted paths and escaped spaces)
   const atMatches = [
-    ...value.matchAll(/(?:^|\s)(@(?:"[^"]*"|(?:[^\\ ]|\\ )*))/g),
+    ...value.matchAll(/(?:^|\s)(@(?:"[^"\n]*"|(?:[^\s\\]|\\ )*))/g),
   ];
 
   // If no cursor position, fallback to last match
