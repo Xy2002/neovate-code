@@ -1,3 +1,12 @@
+## 0.22.10
+
+`2026-01-08`
+
+- feat: enhance session export markdown formatting by [@阿平](https://github.com/阿平) in [#637](https://github.com/umijs/takumi/pull/637)
+- fix: update gemini-3-flash model name in providers map by [@sorrycc](https://github.com/sorrycc)
+- Fix/select input dynamic columns by [@Din](https://github.com/Din) in [#636](https://github.com/umijs/takumi/pull/636)
+
+
 ## 0.22.9
 
 `2026-01-07`
