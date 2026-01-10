@@ -18,15 +18,22 @@ export function ForkModal({ messages, onSelect, onClose }: ForkModalProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   // Filter to user messages only and reverse for chronological order (newest first)
-  const userMessages = messages
-    .filter(
-      (m) =>
-        m.role === 'user' &&
-        !('hidden' in m && m.hidden) &&
-        !isCanceledMessage(m) &&
-        !(typeof m.content === 'string' && m.content === CANCELED_MESSAGE_TEXT),
-    )
-    .reverse();
+  const userMessages = React.useMemo(
+    () =>
+      messages
+        .filter(
+          (m) =>
+            m.role === 'user' &&
+            !('hidden' in m && m.hidden) &&
+            !isCanceledMessage(m) &&
+            !(
+              typeof m.content === 'string' &&
+              m.content === CANCELED_MESSAGE_TEXT
+            ),
+        )
+        .reverse(),
+    [messages],
+  );
 
   useInput((input, key) => {
     if (key.escape) {
@@ -52,19 +59,18 @@ export function ForkModal({ messages, onSelect, onClose }: ForkModalProps) {
         .map((part) => part.text);
       text = textParts.join(' ');
     }
-    text = text.replace(/\n+/g, ' ').replace(/ +/g, ' ').trim();
+    text = text.replace(/\s+/g, ' ').trim();
     return text.length > 80 ? text.slice(0, 80) + '...' : text;
   };
 
   const getTimestamp = (message: Message & { timestamp: string }): string => {
     if (!message.timestamp) return '';
     const date = new Date(message.timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${month}/${day} ${hours}:${minutes}`;
   };
 
   return (
