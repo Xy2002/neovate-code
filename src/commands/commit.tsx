@@ -1383,8 +1383,7 @@ export async function runCommit(context: Context) {
       argv.language ||
       context.config.commit?.language ||
       context.config.language,
-    systemPrompt:
-      argv.systemPrompt || context.config.commit?.systemPrompt,
+    systemPrompt: argv.systemPrompt || context.config.commit?.systemPrompt,
     followStyle: argv.followStyle || false,
   };
 
