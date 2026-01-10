@@ -100,6 +100,7 @@ interface CommitOptions {
   interactive: boolean;
   model?: string;
   language?: string;
+  systemPrompt?: string;
   followStyle: boolean;
 }
 
@@ -411,6 +412,7 @@ and may require re-resolving conflicts.`,
         {
           cwd,
           language: options.language || 'English',
+          systemPrompt: options.systemPrompt,
           model: options.model,
         },
       );
@@ -463,6 +465,7 @@ and may require re-resolving conflicts.`,
     const generateResult = await messageBus.request('project.generateCommit', {
       cwd,
       language: options.language || 'English',
+      systemPrompt: options.systemPrompt,
       model: options.model,
     });
 
@@ -1304,6 +1307,7 @@ Options:
   -i, --interactive             Interactive mode (default)
   -m, --model <model>           Specify model to use
   --language <language>         Set language for commit message
+  --system-prompt <prompt>      Custom system prompt for generating commit message
   --copy                        Copy commit message to clipboard
   --push                        Push changes after commit
   --follow-style                Follow existing repository commit style
@@ -1316,6 +1320,7 @@ Examples:
   ${productName} commit -s -c --push    Stage, commit and push in one command
   ${productName} commit --follow-style  Generate message following repo style
   ${productName} commit --checkout      Create branch and commit changes
+  ${productName} commit --system-prompt "Generate Chinese commit messages only"
     `.trim(),
   );
 }
@@ -1346,7 +1351,7 @@ export async function runCommit(context: Context) {
       'help',
       'checkout',
     ],
-    string: ['model', 'language'],
+    string: ['model', 'language', 'systemPrompt'],
   });
 
   // Help
@@ -1378,6 +1383,8 @@ export async function runCommit(context: Context) {
       argv.language ||
       context.config.commit?.language ||
       context.config.language,
+    systemPrompt:
+      argv.systemPrompt || context.config.commit?.systemPrompt,
     followStyle: argv.followStyle || false,
   };
 
