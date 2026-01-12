@@ -478,6 +478,12 @@ export function applyEdits(
   for (const edit of edits) {
     const { old_string, new_string, replace_all } = edit;
 
+    if (old_string === undefined || old_string === null) {
+      throw new Error(
+        `old_string is required and cannot be undefined or null when editing file: ${filePath}`,
+      );
+    }
+
     const oldStrCheck = old_string.replace(/\n+$/, '');
     for (const historyStr of newStringsHistory) {
       if (oldStrCheck !== '' && historyStr.includes(oldStrCheck)) {
