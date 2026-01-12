@@ -212,15 +212,26 @@ export function parseSlashCommand(input: string): {
 } {
   const trimmed = input.trim();
   const spaceIndex = trimmed.indexOf(' ');
-  if (spaceIndex === -1) {
+  const newlineIndex = trimmed.indexOf('\n');
+  let separatorIndex: number;
+  if (spaceIndex === -1 && newlineIndex === -1) {
+    separatorIndex = -1;
+  } else if (spaceIndex === -1) {
+    separatorIndex = newlineIndex;
+  } else if (newlineIndex === -1) {
+    separatorIndex = spaceIndex;
+  } else {
+    separatorIndex = Math.min(spaceIndex, newlineIndex);
+  }
+  if (separatorIndex === -1) {
     return {
       command: trimmed.slice(1),
       args: '',
     };
   }
   return {
-    command: trimmed.slice(1, spaceIndex),
-    args: trimmed.slice(spaceIndex + 1).trim(),
+    command: trimmed.slice(1, separatorIndex),
+    args: trimmed.slice(separatorIndex + 1).trim(),
   };
 }
 
