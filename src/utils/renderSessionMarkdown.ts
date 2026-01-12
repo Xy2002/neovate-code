@@ -92,9 +92,7 @@ function renderMessageContent(
       if (part.type === 'text') return (part as TextPart).text;
 
       if (part.type === 'reasoning') {
-        return `_Thinking:_
-
-${part.text}`;
+        return `_Thinking:_\n\n${part.text}\n`;
       }
 
       if (part.type === 'tool_use') {
