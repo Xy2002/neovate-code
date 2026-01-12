@@ -1,7 +1,6 @@
 import { Box, Text, useInput } from 'ink';
 import pc from 'picocolors';
 import React, { useEffect, useState } from 'react';
-import type { ModelInfo } from '../../model';
 import PaginatedGroupSelectInput from '../../ui/PaginatedGroupSelectInput';
 import { useAppStore } from '../../ui/store';
 import type { LocalJSXCommand } from '../types';
@@ -17,6 +16,11 @@ interface GroupedData {
   models: { name: string; modelId: string; value: string }[];
 }
 
+interface NullModel {
+  providerId: string;
+  modelId: string;
+}
+
 export const ModelSelect: React.FC<ModelSelectProps> = ({
   onExit,
   onSelect,
@@ -29,15 +33,18 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
     modelId: string;
   } | null>(null);
   const [groupedModels, setGroupedModels] = useState<GroupedData[]>([]);
+  const [nullModels, setNullModels] = useState<NullModel[]>([]);
 
   useEffect(() => {
     bridge.request('models.list', { cwd }).then((result) => {
-      if (result.data.currentModel) {
-        const currentModel: ModelInfo = result.data.currentModel;
-        setCurrentModel(`${currentModel.provider.id}/${currentModel.model.id}`);
+      if (result.data.currentModelInfo) {
         setCurrentModelInfo(result.data.currentModelInfo);
+        setCurrentModel(
+          `${result.data.currentModelInfo.providerName}/${result.data.currentModelInfo.modelId}`,
+        );
       }
       setGroupedModels(result.data.groupedModels);
+      setNullModels(result.data.nullModels || []);
     });
   }, [cwd]);
 
@@ -52,6 +59,14 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
       <Box marginBottom={1}>
         <Text bold>Select Model</Text>
       </Box>
+      {nullModels.length > 0 && (
+        <Box marginBottom={1}>
+          <Text color="yellow">
+            Warning: Misconfigured models:{' '}
+            {nullModels.map((m) => `${m.providerId}/${m.modelId}`).join(', ')}
+          </Text>
+        </Box>
+      )}
       <Box marginBottom={1}>
         <Text color="gray">
           current model:{' '}

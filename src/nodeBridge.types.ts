@@ -253,6 +253,10 @@ type ModelsListOutput = {
       modelId: string;
       modelContextLimit: number;
     } | null;
+    nullModels: Array<{
+      providerId: string;
+      modelId: string;
+    }>;
   };
 };
 

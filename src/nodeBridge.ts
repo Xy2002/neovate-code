@@ -417,6 +417,7 @@ class NodeHandlerRegistry {
               modelContextLimit: model.model.limit.context,
             }
           : null;
+      const nullModels: { providerId: string; modelId: string }[] = [];
       const groupedModels = Object.values(
         providers as Record<string, Provider>,
       ).map((provider) => ({
@@ -425,7 +426,7 @@ class NodeHandlerRegistry {
         models: Object.entries(provider.models)
           .filter(([modelId, model]) => {
             if (model == null) {
-              console.log('[debug] null model:', provider.id, modelId);
+              nullModels.push({ providerId: provider.id, modelId });
               return false;
             }
             return true;
@@ -442,6 +443,7 @@ class NodeHandlerRegistry {
           groupedModels,
           currentModel,
           currentModelInfo,
+          nullModels,
         },
       };
     });

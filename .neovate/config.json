@@ -1,5 +1,5 @@
 {
   "commit": {
-    "systemPrompt": "Follow these rules for commit type/scope:\n1. If changed files are outside src/, use 'docs:' for documentation files, otherwise use 'chore:' (no scope)\n2. If changes are related to commit command, use scope 'commit' (e.g., 'feat(commit):', 'fix(commit):')\n3. If changes are related to run command, use scope 'run' (e.g., 'feat(run):', 'fix(run):')"
+    "systemPrompt": "Follow these rules for commit type/scope:\n1. If changed files are outside src/, use 'docs:' for documentation files, otherwise use 'chore:' (no scope)\n2. If changes are related to commit command, use scope 'commit' (e.g., 'feat(commit):', 'fix(commit):')\n3. If changes are related to src/commands/run.tsx, use scope 'run' (e.g., 'feat(run):', 'fix(run):')"
   }
 }
