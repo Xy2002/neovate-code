@@ -1119,7 +1119,7 @@ export const models: ModelMap = {
   },
 };
 
-function getProviderBaseURL(provider: Provider) {
+export function getProviderBaseURL(provider: Provider) {
   if (provider.options?.baseURL) {
     return provider.options.baseURL;
   }

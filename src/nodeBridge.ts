@@ -2743,6 +2743,8 @@ function normalizeProviders(providers: ProvidersMap, context: Context) {
         doc: provider.doc,
         env: provider.env,
         apiEnv: provider.apiEnv,
+        api: provider.api,
+        options: provider.options,
         validEnvs,
         hasApiKey,
         maskedApiKey,

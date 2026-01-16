@@ -465,6 +465,13 @@ type ProvidersListOutput = {
       doc?: string;
       env?: string[];
       apiEnv?: string[];
+      api?: string;
+      options?: {
+        baseURL?: string;
+        apiKey?: string;
+        headers?: Record<string, string>;
+        httpProxy?: string;
+      };
       validEnvs: string[];
       hasApiKey: boolean;
       maskedApiKey?: string;
