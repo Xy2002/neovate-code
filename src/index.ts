@@ -397,7 +397,6 @@ export async function runNeovate(opts: {
     return { shutdown };
   }
   const validCommands = [
-    '__test',
     'config',
     'commit',
     'mcp',
@@ -414,10 +413,6 @@ export async function runNeovate(opts: {
       ...contextCreateOpts,
     });
     switch (command) {
-      case '__test': {
-        await runTest(context);
-        break;
-      }
       case 'config': {
         const { runConfig } = await import('./commands/config');
         await runConfig(context);
