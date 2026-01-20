@@ -64,33 +64,6 @@ class WebServer {
       );
       return reply.send(clientInfo);
     });
-
-    // files
-    await this.app.register(import('./routes/files'), {
-      prefix: BASE_API_PREFIX,
-      ...this.contextCreateOpts,
-    });
-
-    // session
-    await this.app.register(import('./routes/session'), {
-      prefix: BASE_API_PREFIX,
-      ...this.contextCreateOpts,
-      cwd: this.cwd,
-    });
-
-    // folders
-    await this.app.register(import('./routes/folders'), {
-      prefix: BASE_API_PREFIX,
-      ...this.contextCreateOpts,
-      cwd: this.cwd,
-    });
-
-    // project
-    await this.app.register(import('./routes/project'), {
-      prefix: BASE_API_PREFIX,
-      ...this.contextCreateOpts,
-      cwd: this.cwd,
-    });
   }
 
   private setupWebSocket() {
