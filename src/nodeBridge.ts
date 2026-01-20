@@ -1330,6 +1330,18 @@ class NodeHandlerRegistry {
     this.messageBus.registerHandler('project.generateCommit', async (data) => {
       const { cwd, language = 'English', systemPrompt, model } = data;
       try {
+        // Validate model if explicitly provided
+        if (model) {
+          const context = await this.getContext(cwd);
+          const { error } = await resolveModelWithContext(model, context);
+          if (error) {
+            return {
+              success: false,
+              error: error instanceof Error ? error.message : String(error),
+            };
+          }
+        }
+
         const { getStagedDiff, getStagedFileList } = await import(
           './utils/git'
         );
