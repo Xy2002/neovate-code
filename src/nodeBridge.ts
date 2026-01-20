@@ -780,19 +780,22 @@ class NodeHandlerRegistry {
 
         // Read all projects from GlobalData
         const allData = globalData['readData']();
-        const projectPaths = Object.keys(allData.projects || {});
+        const allProjectPaths = Object.keys(allData.projects || {});
 
-        const projects = projectPaths.map((projectPath) => {
-          const projectInfo = allData.projects[projectPath];
-          const lastAccessed = projectInfo.lastAccessed || null;
+        // Filter out projects that don't exist on disk
+        const existingProjectPaths = allProjectPaths.filter((projectPath) =>
+          existsSync(projectPath),
+        );
 
-          // Get session count for this project
+        const projects = existingProjectPaths.map((projectPath) => {
+          // Get session info for this project
           const projectPaths = new Paths({
             productName: context.productName,
             cwd: projectPath,
           });
 
           let sessionCount = 0;
+          let lastAccessed: number | null = null;
           let sessions: Array<{
             sessionId: string;
             modified: Date;
@@ -804,6 +807,11 @@ class NodeHandlerRegistry {
           if (existsSync(projectPaths.globalProjectDir)) {
             const allSessions = projectPaths.getAllSessions();
             sessionCount = allSessions.length;
+
+            // Use latest session's modified time as lastAccessed
+            if (allSessions.length > 0) {
+              lastAccessed = allSessions[0].modified.getTime();
+            }
 
             if (includeSessionDetails) {
               sessions = allSessions;
