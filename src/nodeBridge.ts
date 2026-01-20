@@ -836,18 +836,20 @@ class NodeHandlerRegistry {
           return result;
         });
 
-        // Sort by lastAccessed (most recent first)
-        projects.sort((a, b) => {
-          if (a.lastAccessed === null && b.lastAccessed === null) return 0;
-          if (a.lastAccessed === null) return 1;
-          if (b.lastAccessed === null) return -1;
-          return b.lastAccessed - a.lastAccessed;
-        });
+        // Filter out projects with no sessions and sort by lastAccessed (most recent first)
+        const projectsWithSessions = projects
+          .filter((project) => project.sessionCount > 0)
+          .sort((a, b) => {
+            if (a.lastAccessed === null && b.lastAccessed === null) return 0;
+            if (a.lastAccessed === null) return 1;
+            if (b.lastAccessed === null) return -1;
+            return b.lastAccessed - a.lastAccessed;
+          });
 
         return {
           success: true,
           data: {
-            projects,
+            projects: projectsWithSessions,
           },
         };
       } catch (error: any) {
