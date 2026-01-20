@@ -7,7 +7,7 @@
  *   bun scripts/test-nodebridge.ts [handler] [options]
  *
  * Examples:
- *   bun scripts/test-nodebridge.ts models.test --model anthropic/claude-sonnet-4-20250514
+ *   bun scripts/test-nodebridge.ts models.test --model=anthropic/claude-sonnet-4-20250514
  *   bun scripts/test-nodebridge.ts models.list
  *   bun scripts/test-nodebridge.ts --list
  */
@@ -19,11 +19,23 @@ interface ParsedArgs {
   help: boolean;
   list: boolean;
   handler: string | null;
-  model: string | null;
-  prompt: string | null;
-  timeout: number | null;
-  cwd: string;
-  includeSessionDetails: boolean;
+  data: Record<string, unknown>;
+}
+
+/**
+ * Parse a value string to appropriate type (number, boolean, or string)
+ */
+function parseValue(value: string): unknown {
+  // Boolean
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+
+  // Number (including negative and decimal)
+  if (/^-?\d+(\.\d+)?$/.test(value)) {
+    return Number(value);
+  }
+
+  return value;
 }
 
 function parseArgs(): ParsedArgs {
@@ -32,29 +44,35 @@ function parseArgs(): ParsedArgs {
     help: false,
     list: false,
     handler: null,
-    model: null,
-    prompt: null,
-    timeout: null,
-    cwd: process.cwd(),
-    includeSessionDetails: false,
+    data: {},
   };
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+
     if (arg === '-h' || arg === '--help') {
       result.help = true;
     } else if (arg === '-l' || arg === '--list') {
       result.list = true;
-    } else if (arg === '--model' && args[i + 1]) {
-      result.model = args[++i];
-    } else if (arg === '--prompt' && args[i + 1]) {
-      result.prompt = args[++i];
-    } else if (arg === '--timeout' && args[i + 1]) {
-      result.timeout = parseInt(args[++i], 10);
-    } else if (arg === '--cwd' && args[i + 1]) {
-      result.cwd = args[++i];
-    } else if (arg === '--includeSessionDetails') {
-      result.includeSessionDetails = true;
+    } else if (arg.startsWith('--')) {
+      // Handle --key=value or --key value format
+      const withoutDashes = arg.slice(2);
+
+      if (withoutDashes.includes('=')) {
+        // --key=value format
+        const eqIndex = withoutDashes.indexOf('=');
+        const key = withoutDashes.slice(0, eqIndex);
+        const value = withoutDashes.slice(eqIndex + 1);
+        result.data[key] = parseValue(value);
+      } else if (i + 1 < args.length && !args[i + 1].startsWith('-')) {
+        // --key value format
+        const key = withoutDashes;
+        const value = args[++i];
+        result.data[key] = parseValue(value);
+      } else {
+        // --flag (boolean flag without value)
+        result.data[withoutDashes] = true;
+      }
     } else if (!arg.startsWith('-') && !result.handler) {
       result.handler = arg;
     }
@@ -75,132 +93,72 @@ Arguments:
 Options:
   -h, --help        Show this help message
   -l, --list        List all available handlers
-  --model <model>   Model string for models.test (e.g., anthropic/claude-sonnet-4-20250514)
-  --prompt <text>   Custom prompt for models.test (default: 'hi')
-  --timeout <ms>    Timeout in milliseconds for models.test (default: 15000)
-  --cwd <path>      Working directory (defaults to current directory)
-  --includeSessionDetails  Include session details for projects.list
+
+Handler Arguments:
+  All --key=value or --key value pairs are passed to the handler as data.
+  Values are auto-converted: numbers become Number, true/false become Boolean.
 
 Examples:
   bun scripts/test-nodebridge.ts --list
   bun scripts/test-nodebridge.ts models.list
-  bun scripts/test-nodebridge.ts models.test --model anthropic/claude-sonnet-4-20250514
-  bun scripts/test-nodebridge.ts models.test --model openai/gpt-4o --prompt "Say hello" --timeout 5000
-  bun scripts/test-nodebridge.ts providers.list
-  bun scripts/test-nodebridge.ts config.list
-  bun scripts/test-nodebridge.ts projects.list --includeSessionDetails
+  bun scripts/test-nodebridge.ts models.test --model=anthropic/claude-sonnet-4-20250514
+  bun scripts/test-nodebridge.ts models.test --model=openai/gpt-4o --prompt="Say hello" --timeout=5000
+  bun scripts/test-nodebridge.ts utils.getPaths --cwd=/path/to/dir --maxFiles=100
+  bun scripts/test-nodebridge.ts projects.list --includeSessionDetails=true
 `);
 }
 
-// Available handlers for testing
-const HANDLERS: Record<
-  string,
-  { description: string; getData: (args: ParsedArgs) => any }
-> = {
+// Available handlers for listing
+const HANDLERS: Record<string, string> = {
   // Models
-  'models.list': {
-    description: 'List all available models grouped by provider',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
-  'models.test': {
-    description: 'Test a specific model with a simple request',
-    getData: (args) => ({
-      model: args.model || 'anthropic/claude-sonnet-4-20250514',
-      ...(args.prompt && { prompt: args.prompt }),
-      ...(args.timeout && { timeout: args.timeout }),
-    }),
-  },
+  'models.list': 'List all available models grouped by provider',
+  'models.test': 'Test a specific model with a simple request',
 
   // Config
-  'config.list': {
-    description: 'List all configuration',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'config.list': 'List all configuration',
 
   // Providers
-  'providers.list': {
-    description: 'List all available providers',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'providers.list': 'List all available providers',
 
   // MCP
-  'mcp.list': {
-    description: 'List MCP servers',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
-  'mcp.getStatus': {
-    description: 'Get MCP status',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'mcp.list': 'List MCP servers',
+  'mcp.getStatus': 'Get MCP status',
 
   // Output Styles
-  'outputStyles.list': {
-    description: 'List available output styles',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'outputStyles.list': 'List available output styles',
 
   // Project
-  'project.getRepoInfo': {
-    description: 'Get repository information',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
-  'project.workspaces.list': {
-    description: 'List all workspaces',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'project.getRepoInfo': 'Get repository information',
+  'project.workspaces.list': 'List all workspaces',
 
   // Projects
-  'projects.list': {
-    description: 'List all projects that have been used',
-    getData: (args) => ({
-      cwd: args.cwd,
-      includeSessionDetails: args.includeSessionDetails,
-    }),
-  },
+  'projects.list': 'List all projects that have been used',
 
   // Sessions
-  'sessions.list': {
-    description: 'List all sessions',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'sessions.list': 'List all sessions',
 
   // Slash Commands
-  'slashCommand.list': {
-    description: 'List all slash commands',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'slashCommand.list': 'List all slash commands',
 
   // Git
-  'git.status': {
-    description: 'Get git status',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
-  'git.detectGitHub': {
-    description: 'Detect GitHub CLI and remote',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'git.status': 'Get git status',
+  'git.detectGitHub': 'Detect GitHub CLI and remote',
 
   // Utils
-  'utils.getPaths': {
-    description: 'Get file paths in project',
-    getData: (args) => ({ cwd: args.cwd, maxFiles: 100 }),
-  },
-  'utils.detectApps': {
-    description: 'Detect installed applications',
-    getData: (args) => ({ cwd: args.cwd }),
-  },
+  'utils.getPaths': 'Get file paths in project',
+  'utils.detectApps': 'Detect installed applications',
 };
 
 function listHandlers(): void {
   console.log('\nAvailable handlers:\n');
   const grouped: Record<string, string[]> = {};
 
-  for (const [name, config] of Object.entries(HANDLERS)) {
+  for (const [name, description] of Object.entries(HANDLERS)) {
     const [group] = name.split('.');
     if (!grouped[group]) {
       grouped[group] = [];
     }
-    grouped[group].push(`  ${name.padEnd(30)} ${config.description}`);
+    grouped[group].push(`  ${name.padEnd(30)} ${description}`);
   }
 
   for (const [group, handlers] of Object.entries(grouped)) {
@@ -233,7 +191,7 @@ async function createNodeBridge(): Promise<MessageBus> {
 async function testHandler(
   messageBus: MessageBus,
   handler: string,
-  data: any,
+  data: Record<string, unknown>,
 ): Promise<void> {
   console.log(`\n\x1b[36m━━━ Testing: ${handler} ━━━\x1b[0m\n`);
   console.log('\x1b[33mRequest:\x1b[0m');
@@ -285,18 +243,10 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const handlerConfig = HANDLERS[args.handler];
-  if (!handlerConfig) {
-    console.error(`Error: Unknown handler "${args.handler}"`);
-    console.error('Use --list to see available handlers.');
-    process.exit(1);
-  }
-
   console.log('\x1b[90mInitializing NodeBridge...\x1b[0m');
   const messageBus = await createNodeBridge();
 
-  const data = handlerConfig.getData(args);
-  await testHandler(messageBus, args.handler, data);
+  await testHandler(messageBus, args.handler, args.data);
 
   process.exit(0);
 }
