@@ -863,6 +863,16 @@ class NodeHandlerRegistry {
     this.messageBus.registerHandler('project.getRepoInfo', async (data) => {
       const { cwd } = data;
       try {
+        const { existsSync } = await import('fs');
+
+        // Check if cwd exists
+        if (!existsSync(cwd)) {
+          return {
+            success: false,
+            error: `Directory does not exist: ${cwd}`,
+          };
+        }
+
         const timings: Record<string, number> = {};
         const startTotal = Date.now();
 
@@ -906,7 +916,7 @@ class NodeHandlerRegistry {
           const repoData = {
             path: cwd,
             name: basename(cwd),
-            workspaceIds: [],
+            workspaceIds: [`${cwd}:default`],
             metadata: {
               lastAccessed,
               settings,
