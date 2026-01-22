@@ -2749,12 +2749,12 @@ ${diff}
         userPrompt: message,
         cwd,
         systemPrompt:
-          "Analyze if this message indicates a new conversation topic. If it does, extract a 2-3 word title that captures the new topic. Format your response as a JSON object with one field: 'title' (string).",
+          "Extract a concise 2-5 word title that captures the main topic or intent of this message. Format your response as a JSON object with one field: 'title' (string).",
         responseFormat: {
           type: 'json',
           schema: z.toJSONSchema(
             z.object({
-              title: z.string().nullable(),
+              title: z.string(),
             }),
           ),
         },
