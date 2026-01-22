@@ -43,13 +43,6 @@ export type CommitConfig = {
 
 export type ProviderConfig = Partial<Omit<Provider, 'createModel'>>;
 
-export type DesktopConfig = {
-  theme?: 'light' | 'dark' | 'system';
-  sendMessageWith?: 'enter' | 'cmdEnter';
-  terminalFont?: string;
-  terminalFontSize?: number;
-};
-
 export type Config = {
   model: string;
   planModel: string;
@@ -76,7 +69,6 @@ export type Config = {
   autoUpdate?: boolean;
   temperature?: number;
   httpProxy?: string;
-  desktop?: DesktopConfig;
   /**
    * Extensions configuration for third-party custom agents.
    * Allows arbitrary nested configuration without validation.
@@ -122,10 +114,6 @@ const DEFAULT_CONFIG: Partial<Config> = {
   extensions: {},
   tools: {},
   agent: {},
-  desktop: {
-    theme: 'light',
-    sendMessageWith: 'enter',
-  },
 };
 const VALID_CONFIG_KEYS = [
   ...Object.keys(DEFAULT_CONFIG),
@@ -155,11 +143,10 @@ const OBJECT_CONFIG_KEYS = [
   'provider',
   'extensions',
   'tools',
-  'desktop',
   'agent',
 ];
 const BOOLEAN_CONFIG_KEYS = ['quiet', 'todo', 'autoCompact', 'autoUpdate'];
-export const GLOBAL_ONLY_KEYS = ['desktop'];
+export const GLOBAL_ONLY_KEYS: string[] = [];
 
 function assertGlobalAllowed(global: boolean, key: string) {
   const rootKey = key.split('.')[0];
