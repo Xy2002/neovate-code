@@ -87,6 +87,7 @@ export interface Provider {
     headers?: Record<string, string>;
     httpProxy?: string;
   };
+  source?: 'built-in' | string;
 }
 
 import { createProxyFetch } from './utils/proxy';
@@ -1238,6 +1239,7 @@ export const providers: ProvidersMap = {
   'github-copilot': {
     id: 'github-copilot',
     name: 'GitHub Copilot',
+    source: 'built-in',
     env: [],
     apiEnv: [],
     api: 'https://api.githubcopilot.com',
@@ -1306,6 +1308,7 @@ export const providers: ProvidersMap = {
   },
   openai: {
     id: 'openai',
+    source: 'built-in',
     env: ['OPENAI_API_KEY'],
     apiEnv: ['OPENAI_API_BASE'],
     name: 'OpenAI',
@@ -1332,6 +1335,7 @@ export const providers: ProvidersMap = {
   },
   google: {
     id: 'google',
+    source: 'built-in',
     env: ['GOOGLE_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY'],
     apiEnv: ['GOOGLE_GENERATIVE_AI_API_BASE'],
     name: 'Google',
@@ -1357,6 +1361,7 @@ export const providers: ProvidersMap = {
   },
   deepseek: {
     id: 'deepseek',
+    source: 'built-in',
     env: ['DEEPSEEK_API_KEY'],
     name: 'DeepSeek',
     api: 'https://api.deepseek.com',
@@ -1370,6 +1375,7 @@ export const providers: ProvidersMap = {
   },
   xai: {
     id: 'xai',
+    source: 'built-in',
     env: ['XAI_API_KEY'],
     apiEnv: ['XAI_BASE_URL'],
     name: 'xAI',
@@ -1395,6 +1401,7 @@ export const providers: ProvidersMap = {
   },
   anthropic: {
     id: 'anthropic',
+    source: 'built-in',
     env: ['ANTHROPIC_API_KEY'],
     apiEnv: ['ANTHROPIC_API_BASE'],
     name: 'Anthropic',
@@ -1415,6 +1422,7 @@ export const providers: ProvidersMap = {
   },
   aihubmix: {
     id: 'aihubmix',
+    source: 'built-in',
     env: ['AIHUBMIX_API_KEY'],
     name: 'AIHubMix',
     api: 'https://aihubmix.com/v1',
@@ -1460,6 +1468,7 @@ export const providers: ProvidersMap = {
   },
   openrouter: {
     id: 'openrouter',
+    source: 'built-in',
     env: ['OPENROUTER_API_KEY', 'OPEN_ROUTER_API_KEY'],
     name: 'OpenRouter',
     doc: 'https://openrouter.ai/docs/models',
@@ -1538,6 +1547,7 @@ export const providers: ProvidersMap = {
   },
   iflow: {
     id: 'iflow',
+    source: 'built-in',
     env: ['IFLOW_API_KEY'],
     name: 'iFlow',
     api: 'https://apis.iflow.cn/v1/',
@@ -1574,6 +1584,7 @@ export const providers: ProvidersMap = {
   },
   moonshotai: {
     id: 'moonshotai',
+    source: 'built-in',
     env: ['MOONSHOT_API_KEY'],
     name: 'Moonshot',
     api: 'https://api.moonshot.ai/v1',
@@ -1588,6 +1599,7 @@ export const providers: ProvidersMap = {
   },
   'moonshotai-cn': {
     id: 'moonshotai-cn',
+    source: 'built-in',
     env: ['MOONSHOT_API_KEY'],
     name: 'MoonshotCN',
     api: 'https://api.moonshot.cn/v1',
@@ -1602,6 +1614,7 @@ export const providers: ProvidersMap = {
   },
   groq: {
     id: 'groq',
+    source: 'built-in',
     env: ['GROQ_API_KEY'],
     name: 'Groq',
     api: 'https://api.groq.com/openai/v1',
@@ -1611,6 +1624,7 @@ export const providers: ProvidersMap = {
   },
   siliconflow: {
     id: 'siliconflow',
+    source: 'built-in',
     env: ['SILICONFLOW_API_KEY'],
     name: 'SiliconFlow',
     api: 'https://api.siliconflow.com/v1',
@@ -1630,6 +1644,7 @@ export const providers: ProvidersMap = {
   },
   'siliconflow-cn': {
     id: 'siliconflow-cn',
+    source: 'built-in',
     env: ['SILICONFLOW_API_KEY'],
     name: 'SiliconFlow CN',
     api: 'https://api.siliconflow.cn/v1',
@@ -1649,6 +1664,7 @@ export const providers: ProvidersMap = {
   },
   modelscope: {
     id: 'modelscope',
+    source: 'built-in',
     env: ['MODELSCOPE_API_KEY'],
     name: 'ModelScope',
     api: 'https://api-inference.modelscope.cn/v1',
@@ -1667,6 +1683,7 @@ export const providers: ProvidersMap = {
   },
   volcengine: {
     id: 'volcengine',
+    source: 'built-in',
     env: ['VOLCENGINE_API_KEY'],
     name: 'VolcEngine',
     api: 'https://ark.cn-beijing.volces.com/api/v3',
@@ -1681,6 +1698,7 @@ export const providers: ProvidersMap = {
   },
   'zai-coding-plan': {
     id: 'zai-coding-plan',
+    source: 'built-in',
     env: ['ZHIPU_API_KEY'],
     name: 'Z.AI Coding Plan',
     api: 'https://api.z.ai/api/coding/paas/v4',
@@ -1698,6 +1716,7 @@ export const providers: ProvidersMap = {
   },
   'zhipuai-coding-plan': {
     id: 'zhipuai-coding-plan',
+    source: 'built-in',
     env: ['ZHIPU_API_KEY'],
     name: 'Zhipu AI Coding Plan',
     api: 'https://open.bigmodel.cn/api/coding/paas/v4',
@@ -1715,6 +1734,7 @@ export const providers: ProvidersMap = {
   },
   zhipuai: {
     id: 'zhipuai',
+    source: 'built-in',
     env: ['ZHIPU_API_KEY'],
     name: 'Zhipu AI',
     api: 'https://open.bigmodel.cn/api/paas/v4',
@@ -1732,6 +1752,7 @@ export const providers: ProvidersMap = {
   },
   zenmux: {
     id: 'zenmux',
+    source: 'built-in',
     env: ['ZENMUX_API_KEY'],
     name: 'ZenMux',
     api: 'https://zenmux.ai/api/v1',
@@ -1769,6 +1790,7 @@ export const providers: ProvidersMap = {
   },
   minimax: {
     id: 'minimax',
+    source: 'built-in',
     env: ['MINIMAX_API_KEY'],
     name: 'Minimax',
     api: 'https://api.minimaxi.io/anthropic/v1',
@@ -1787,6 +1809,7 @@ export const providers: ProvidersMap = {
   },
   'minimax-cn': {
     id: 'minimax-cn',
+    source: 'built-in',
     env: ['MINIMAX_API_KEY'],
     name: 'Minimax CN',
     api: 'https://api.minimaxi.com/anthropic/v1',
@@ -1805,6 +1828,7 @@ export const providers: ProvidersMap = {
   },
   xiaomi: {
     id: 'xiaomi',
+    source: 'built-in',
     env: ['MIMO_API_KEY'],
     name: 'Xiaomi Mimo',
     api: 'https://api.xiaomimimo.com/v1',
@@ -1816,6 +1840,7 @@ export const providers: ProvidersMap = {
   },
   cerebras: {
     id: 'cerebras',
+    source: 'built-in',
     env: ['CEREBRAS_API_KEY'],
     name: 'Cerebras',
     doc: 'https://cerebras.ai/docs',
@@ -1850,6 +1875,7 @@ export const providers: ProvidersMap = {
   },
   huggingface: {
     id: 'huggingface',
+    source: 'built-in',
     env: ['HUGGINGFACE_API_KEY'],
     name: 'Hugging Face',
     doc: 'https://huggingface.co/docs/inference-providers/index',
@@ -1868,6 +1894,7 @@ export const providers: ProvidersMap = {
   },
   poe: {
     id: 'poe',
+    source: 'built-in',
     env: ['POE_API_KEY'],
     name: 'Poe',
     api: 'https://api.poe.com/v1',
@@ -1890,6 +1917,7 @@ export const providers: ProvidersMap = {
   },
   antigravity: {
     id: 'antigravity',
+    source: 'built-in',
     env: [],
     name: 'Antigravity',
     doc: 'https://antigravity.google/',
@@ -1932,6 +1960,7 @@ export const providers: ProvidersMap = {
   },
   nvidia: {
     id: 'nvidia',
+    source: 'built-in',
     env: ['NVIDIA_API_KEY'],
     name: 'NVIDIA',
     api: 'https://integrate.api.nvidia.com/v1/',
@@ -1954,6 +1983,7 @@ export const providers: ProvidersMap = {
   },
   canopywave: {
     id: 'canopywave',
+    source: 'built-in',
     env: ['CANOPYWAVE_API_KEY'],
     name: 'CanopyWave',
     api: 'https://inference.canopywave.io/v1',
@@ -1968,6 +1998,7 @@ export const providers: ProvidersMap = {
   },
   modelwatch: {
     id: 'modelwatch',
+    source: 'built-in',
     env: ['MODELWATCH_API_KEY'],
     name: 'ModelWatch',
     api: 'https://hub.modelwatch.dev/v1/',
