@@ -162,6 +162,7 @@ const HANDLERS: Record<string, string> = {
 
   // Sessions
   'sessions.list': 'List all sessions',
+  'sessions.remove': 'Remove a session by sessionId',
 
   // Skills
   'skills.list': 'List all loaded skills',

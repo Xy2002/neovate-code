@@ -2547,6 +2547,33 @@ ${diff}
       };
     });
 
+    this.messageBus.registerHandler('sessions.remove', async (data) => {
+      const { cwd, sessionId } = data;
+      try {
+        const context = await this.getContext(cwd);
+        const { unlinkSync, existsSync } = await import('fs');
+        const logPath = context.paths.getSessionLogPath(sessionId);
+
+        if (!existsSync(logPath)) {
+          return {
+            success: false,
+            error: `Session "${sessionId}" not found`,
+          };
+        }
+
+        unlinkSync(logPath);
+
+        return {
+          success: true,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message || 'Failed to remove session',
+        };
+      }
+    });
+
     //////////////////////////////////////////////
     // sessions
     this.messageBus.registerHandler('sessions.list', async (data) => {
