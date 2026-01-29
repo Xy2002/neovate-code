@@ -1630,7 +1630,10 @@ export const providers: ProvidersMap = {
     name: 'Groq',
     api: 'https://api.groq.com/openai/v1',
     doc: 'https://console.groq.com/docs/models',
-    models: {},
+    models: {
+      'openai/gpt-oss-120b': models['gpt-oss-120b'],
+      'moonshotai/kimi-k2-instruct-0905': models['kimi-k2-0905'],
+    },
     createModel: defaultModelCreator,
   },
   siliconflow: {
@@ -1896,6 +1899,7 @@ export const providers: ProvidersMap = {
       'XiaomiMiMo/MiMo-V2-Flash': models['mimo-v2-flash'],
       'Qwen/Qwen3-Coder-480B-A35B-Instruct':
         models['qwen3-coder-480b-a35b-instruct'],
+      'moonshotai/Kimi-K2.5': models['kimi-k2.5'],
     },
     createModel(name, provider) {
       const apiKey = getProviderApiKey(provider);
