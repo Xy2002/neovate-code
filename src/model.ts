@@ -1535,9 +1535,6 @@ export const providers: ProvidersMap = {
       'z-ai/glm-4.6v': models['glm-4.6v'],
       'z-ai/glm-4.7': models['glm-4.7'],
       'minimax/minimax-m2': models['minimax-m2'],
-      'openrouter/sherlock-dash-alpha': models['sherlock-dash-alpha'],
-      'openrouter/sherlock-think-alpha': models['sherlock-think-alpha'],
-      'xiaomi/mimo-v2-flash:free': models['mimo-v2-flash'],
     },
     createModel(name, provider) {
       const baseURL = getProviderBaseURL(provider);
