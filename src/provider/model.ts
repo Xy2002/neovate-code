@@ -146,32 +146,26 @@ function transformVariants(model: Model, provider: Provider) {
     if (provider.id === 'xiaomi') {
       return {
         on: {
-          anthropic: {
-            thinking: {
-              type: 'enabled',
-            },
+          thinking: {
+            type: 'enabled',
           },
         },
       };
     }
     return {
       high: {
-        anthropic: {
-          thinking: {
-            type: 'enabled',
-            budgetTokens: Math.min(
-              16_000,
-              Math.floor(model.limit.output / 2 - 1),
-            ),
-          },
+        thinking: {
+          type: 'enabled',
+          budgetTokens: Math.min(
+            16_000,
+            Math.floor(model.limit.output / 2 - 1),
+          ),
         },
       },
       max: {
-        anthropic: {
-          thinking: {
-            type: 'enabled',
-            budgetTokens: Math.min(31_999, model.limit.output - 1),
-          },
+        thinking: {
+          type: 'enabled',
+          budgetTokens: Math.min(31_999, model.limit.output - 1),
         },
       },
     };
@@ -182,19 +176,15 @@ function transformVariants(model: Model, provider: Provider) {
     if (id.includes('2.5')) {
       return {
         high: {
-          google: {
-            thinkingConfig: {
-              includeThoughts: true,
-              thinkingBudget: 16000,
-            },
+          thinkingConfig: {
+            includeThoughts: true,
+            thinkingBudget: 16000,
           },
         },
         max: {
-          google: {
-            thinkingConfig: {
-              includeThoughts: true,
-              thinkingBudget: 24576,
-            },
+          thinkingConfig: {
+            includeThoughts: true,
+            thinkingBudget: 24576,
           },
         },
       };
@@ -203,11 +193,9 @@ function transformVariants(model: Model, provider: Provider) {
       ['low', 'high'].map((effort) => [
         effort,
         {
-          google: {
-            thinkingConfig: {
-              includeThoughts: true,
-              thinkingLevel: effort,
-            },
+          thinkingConfig: {
+            includeThoughts: true,
+            thinkingLevel: effort,
           },
         },
       ]),

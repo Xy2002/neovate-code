@@ -121,17 +121,25 @@ export const createModelCreator = (
     });
   };
   let m = (() => {
+    const name = provider.id;
     switch (apiFormat) {
       case ApiFormat.Anthropic:
-        return createAnthropic({ baseURL, apiKey, fetch: customFetch }).chat(
-          modelId,
-        );
+        return createAnthropic({
+          name,
+          baseURL,
+          apiKey,
+          fetch: customFetch,
+        }).chat(modelId);
       case ApiFormat.Responses:
-        return createOpenAI({ baseURL, apiKey, fetch: customFetch }).responses(
-          modelId,
-        );
+        return createOpenAI({
+          name,
+          baseURL,
+          apiKey,
+          fetch: customFetch,
+        }).responses(modelId);
       case ApiFormat.Google:
         return createGoogleGenerativeAI({
+          name,
           baseURL,
           apiKey,
           fetch: customFetch,
@@ -139,7 +147,7 @@ export const createModelCreator = (
       default:
         assert(baseURL, 'baseURL is required');
         return createOpenAICompatible({
-          name: provider.id,
+          name,
           baseURL,
           apiKey,
           fetch: customFetch,

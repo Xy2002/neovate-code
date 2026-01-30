@@ -274,7 +274,10 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
       let thinkingConfig: Record<string, any> | undefined = undefined;
       if (shouldThinking && opts.thinking) {
         thinkingConfig = {
-          providerOptions: opts.model.model.variants?.[opts.thinking.effort],
+          providerOptions: {
+            [opts.model.provider.id]:
+              opts.model.model.variants?.[opts.thinking.effort],
+          },
         };
         shouldThinking = false;
       }
