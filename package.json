@@ -62,6 +62,7 @@
   "license": "MIT",
   "description": "A coding agent to enhance your development workflow.",
   "devDependencies": {
+    "@agentclientprotocol/sdk": "^0.13.0",
     "@ai-sdk/anthropic": "^3.0.29",
     "@ai-sdk/google": "^3.0.16",
     "@ai-sdk/mcp": "^1.0.14",

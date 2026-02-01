@@ -154,6 +154,7 @@ Examples:
   ${p} --tools '{"bash":false,"write":false}' "explain the logic"
 
 Commands:
+  acp                           Run as ACP (Agent Client Protocol) agent
   config                        Manage configuration
   commit                        Commit changes to the repository
   log [file]                    View session logs in HTML (optional file path)
@@ -397,7 +398,17 @@ export async function runNeovate(opts: {
     });
     return { shutdown };
   }
+  if (command === 'acp') {
+    const { runACP } = await import('./commands/acp');
+    await runACP({
+      cwd,
+      contextCreateOpts,
+    });
+    return {};
+  }
   const validCommands = [
+    '__test',
+    'acp',
     'config',
     'commit',
     'mcp',

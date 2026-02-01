@@ -15,6 +15,9 @@ importers:
 
   .:
     devDependencies:
+      '@agentclientprotocol/sdk':
+        specifier: ^0.13.0
+        version: 0.13.1(zod@4.3.5)
       '@ai-sdk/anthropic':
         specifier: ^3.0.29
         version: 3.0.29(zod@4.3.5)
@@ -247,6 +250,11 @@ importers:
         version: 0.25.9
 
 packages:
+
+  '@agentclientprotocol/sdk@0.13.1':
+    resolution: {integrity: sha512-6byvu+F/xc96GBkdAx4hq6/tB3vT63DSBO4i3gYCz8nuyZMerVFna2Gkhm8EHNpZX0J9DjUxzZCW+rnHXUg0FA==}
+    peerDependencies:
+      zod: ^3.25.0 || ^4.0.0
 
   '@ai-sdk/anthropic@3.0.29':
     resolution: {integrity: sha512-Yo+LG0WZuv2QXgpeh95zDeFBy/D02yEgWFCLYE1y72XZzuZ6M/g8tcMyTFOVyfM4yULRE7wShIq2VUYTwi1ZKw==}
@@ -4724,6 +4732,10 @@ packages:
         optional: true
 
 snapshots:
+
+  '@agentclientprotocol/sdk@0.13.1(zod@4.3.5)':
+    dependencies:
+      zod: 4.3.5
 
   '@ai-sdk/anthropic@3.0.29(zod@4.3.5)':
     dependencies:
