@@ -535,6 +535,59 @@ type ProvidersListOutput = {
   };
 };
 
+type ProvidersLoginInitOAuthInput = {
+  cwd: string;
+  providerId: 'github-copilot' | 'antigravity';
+  timeout?: number;
+};
+type ProvidersLoginInitOAuthOutput =
+  | {
+      success: true;
+      data: {
+        authUrl: string;
+        userCode?: string;
+        oauthSessionId: string;
+      };
+    }
+  | { success: false; error: string };
+
+type ProvidersLoginCompleteOAuthInput = {
+  cwd: string;
+  providerId: 'github-copilot' | 'antigravity';
+  oauthSessionId: string;
+  code: string;
+};
+type ProvidersLoginCompleteOAuthOutput =
+  | {
+      success: true;
+      data: { user?: string };
+    }
+  | { success: false; error: string };
+
+type ProvidersLoginStatusInput = {
+  cwd: string;
+  providerId: string;
+};
+type ProvidersLoginStatusOutput = {
+  success: true;
+  data: { isLoggedIn: boolean; user?: string };
+};
+
+type ProvidersLoginPollOAuthInput = {
+  cwd: string;
+  oauthSessionId: string;
+};
+type ProvidersLoginPollOAuthOutput =
+  | {
+      success: true;
+      data: {
+        status: 'pending' | 'completed' | 'error';
+        user?: string;
+        error?: string;
+      };
+    }
+  | { success: false; error: string };
+
 // ============================================================================
 // Session Handlers
 // ============================================================================
@@ -1222,6 +1275,22 @@ export type HandlerMap = {
 
   // Providers handlers
   'providers.list': { input: ProvidersListInput; output: ProvidersListOutput };
+  'providers.login.initOAuth': {
+    input: ProvidersLoginInitOAuthInput;
+    output: ProvidersLoginInitOAuthOutput;
+  };
+  'providers.login.completeOAuth': {
+    input: ProvidersLoginCompleteOAuthInput;
+    output: ProvidersLoginCompleteOAuthOutput;
+  };
+  'providers.login.status': {
+    input: ProvidersLoginStatusInput;
+    output: ProvidersLoginStatusOutput;
+  };
+  'providers.login.pollOAuth': {
+    input: ProvidersLoginPollOAuthInput;
+    output: ProvidersLoginPollOAuthOutput;
+  };
 
   // Session handlers
   'session.initialize': {
