@@ -19,10 +19,8 @@ Add a new OAuth provider named $ARGUMENTS following the patterns in:
    - Add import statement  
    - Add to `providers` map
 
-3. **Login UI** (`src/slash-commands/builtin/login.tsx`):
-   - Add provider id to `OAuthState.providerId` type union
-   - Add provider to OAuth condition checks
-   - Add provider-specific title and waiting message
+3. **Register OAuth provider** (`src/provider/providers/oauth.ts`):
+   - Add provider id to `OAUTH_PROVIDERS` array
 
 4. **OAuth handlers** (`src/nodeBridge/slices/providers.ts`):
    - Import provider class from `oauth-providers`
@@ -30,7 +28,8 @@ Add a new OAuth provider named $ARGUMENTS following the patterns in:
    - Add case in `providers.login.initOAuth` handler
    - Add case in `providers.login.pollOAuth` handler
    - Add case in `providers.login.completeOAuth` handler
-   - Add provider to `providers.login.status` handler check
-   - Add provider to `normalizeProviders` OAuth user extraction
+
+5. **Login UI** (`src/slash-commands/builtin/login.tsx`):
+   - Add provider-specific title and waiting message in OAuth UI section
 
 Run typecheck after implementation.
