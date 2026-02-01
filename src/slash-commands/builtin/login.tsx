@@ -217,6 +217,7 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
     null,
   );
   const [oauthState, setOauthState] = useState<OAuthState | null>(null);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
   useEffect(() => {
     bridge
@@ -283,12 +284,16 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
       provider.id === 'antigravity' ||
       provider.id === 'qwen'
     ) {
+      setSelectedProvider(provider);
+      setOauthLoading(true);
+
       const statusResult = await bridge.request('providers.login.status', {
         cwd,
         providerId: provider.id,
       });
       if (statusResult.success && statusResult.data.isLoggedIn) {
         const user = statusResult.data.user;
+        setOauthLoading(false);
         onExit(
           `✓ ${provider.name} is already logged in${user ? ` as ${user}` : ''}`,
         );
@@ -301,17 +306,18 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
       });
 
       if (!initResult.success) {
+        setOauthLoading(false);
         onExit(`✗ ${initResult.error}`);
         return;
       }
 
+      setOauthLoading(false);
       setOauthState({
         providerId: provider.id as 'github-copilot' | 'antigravity',
         authUrl: initResult.data.authUrl,
         userCode: initResult.data.userCode,
         oauthSessionId: initResult.data.oauthSessionId,
       });
-      setSelectedProvider(provider);
       setStep('oauth-auth');
     } else {
       setSelectedProvider(provider);
@@ -429,6 +435,22 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
         width="100%"
       >
         <Text color="cyan">Loading providers...</Text>
+      </Box>
+    );
+  }
+
+  if (oauthLoading) {
+    return (
+      <Box
+        borderStyle="round"
+        borderColor="gray"
+        flexDirection="column"
+        padding={1}
+        width="100%"
+      >
+        <Text color="cyan">
+          Connecting to {selectedProvider?.name || 'provider'}...
+        </Text>
       </Box>
     );
   }
