@@ -1,15 +1,12 @@
-import {
-  AntigravityProvider,
-  GithubProvider,
-  QwenProvider,
-} from 'oauth-providers';
+import { GithubProvider, QwenProvider } from 'oauth-providers';
 import { ConfigManager } from '../../config';
 import type { Context } from '../../context';
 import type { MessageBus } from '../../messageBus';
 import { type Provider, resolveModelWithContext } from '../../provider/model';
+import { isOAuthProvider } from '../../provider/providers/oauth';
 
 interface OAuthSession {
-  provider: GithubProvider | AntigravityProvider | QwenProvider;
+  provider: GithubProvider | QwenProvider;
   providerId: string;
   createdAt: number;
   cleanup?: () => void;
@@ -58,7 +55,7 @@ export function registerProvidersHandlers(
     try {
       let authUrl: string;
       let userCode: string | undefined;
-      let oauthProvider: GithubProvider | AntigravityProvider | QwenProvider;
+      let oauthProvider: GithubProvider | QwenProvider;
       let cleanup: (() => void) | undefined;
       let tokenPromise: Promise<string> | undefined;
 
@@ -71,16 +68,6 @@ export function registerProvidersHandlers(
         authUrl = auth.verificationUri;
         userCode = auth.userCode;
         oauthProvider = githubProvider;
-        tokenPromise = auth.tokenPromise;
-      } else if (providerId === 'antigravity') {
-        const antigravityProvider = new AntigravityProvider();
-        const auth = await antigravityProvider.initAuth(timeout);
-        if (!auth.authUrl) {
-          return { success: false, error: 'Failed to get authorization URL' };
-        }
-        authUrl = auth.authUrl;
-        oauthProvider = antigravityProvider;
-        cleanup = auth.cleanup;
         tokenPromise = auth.tokenPromise;
       } else if (providerId === 'qwen') {
         const qwenProvider = new QwenProvider();
@@ -173,25 +160,6 @@ export function registerProvidersHandlers(
           `provider.github-copilot.options.apiKey`,
           JSON.stringify(account),
         );
-      } else if (session.providerId === 'antigravity') {
-        const antigravityProvider = session.provider as AntigravityProvider;
-        await antigravityProvider.getToken(token);
-        const account = antigravityProvider.getState() as any;
-        if (!account) {
-          return {
-            success: true,
-            data: {
-              status: 'error' as const,
-              error: 'Failed to get account after authentication',
-            },
-          };
-        }
-        user = account.username || account.email;
-        configManager.setConfig(
-          true,
-          `provider.antigravity.options.apiKey`,
-          JSON.stringify(account),
-        );
       } else if (session.providerId === 'qwen') {
         const qwenProvider = session.provider as QwenProvider;
         await qwenProvider.getToken(token);
@@ -261,22 +229,6 @@ export function registerProvidersHandlers(
           `provider.github-copilot.options.apiKey`,
           JSON.stringify(account),
         );
-      } else if (providerId === 'antigravity') {
-        const antigravityProvider = session.provider as AntigravityProvider;
-        await antigravityProvider.getToken(code);
-        const account = antigravityProvider.getState() as any;
-        if (!account) {
-          return {
-            success: false,
-            error: 'Failed to get account after authentication',
-          };
-        }
-        user = account.username || account.email;
-        configManager.setConfig(
-          true,
-          `provider.antigravity.options.apiKey`,
-          JSON.stringify(account),
-        );
       } else if (providerId === 'qwen') {
         const qwenProvider = session.provider as QwenProvider;
         await qwenProvider.getToken(code);
@@ -315,11 +267,7 @@ export function registerProvidersHandlers(
     }
 
     let user: string | undefined;
-    if (
-      providerId === 'github-copilot' ||
-      providerId === 'antigravity' ||
-      providerId === 'qwen'
-    ) {
+    if (isOAuthProvider(providerId)) {
       try {
         const account = JSON.parse(apiKey);
         user =
@@ -386,7 +334,7 @@ export function normalizeProviders(
       apiKeyEnvName = envApiKey.envName;
     } else if (configApiKey) {
       apiKeyOrigin = 'config';
-      if (provider.id === 'github-copilot' || provider.id === 'antigravity') {
+      if (isOAuthProvider(provider.id)) {
         try {
           const account = JSON.parse(configApiKey);
           oauthUser =

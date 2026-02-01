@@ -1,6 +1,8 @@
 import { Box, Text, useInput } from 'ink';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import type { OAuthProviderId } from '../../provider/providers/oauth';
+import { isOAuthProvider } from '../../provider/providers/oauth';
 import PaginatedGroupSelectInput from '../../ui/PaginatedGroupSelectInput';
 import { useAppStore } from '../../ui/store';
 import { Link } from '../../utils/Link';
@@ -42,7 +44,7 @@ interface OAuthAuthorizationUIProps {
 }
 
 interface OAuthState {
-  providerId: 'github-copilot' | 'antigravity' | 'qwen';
+  providerId: OAuthProviderId;
   authUrl: string;
   userCode?: string;
   oauthSessionId: string;
@@ -279,11 +281,7 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
   }, [cwd, bridge, onExit, initialProviderId]);
 
   const handleProviderSelectWithProvider = async (provider: Provider) => {
-    if (
-      provider.id === 'github-copilot' ||
-      provider.id === 'antigravity' ||
-      provider.id === 'qwen'
-    ) {
+    if (isOAuthProvider(provider.id)) {
       setSelectedProvider(provider);
       setOauthLoading(true);
 
@@ -302,7 +300,7 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
 
       const initResult = await bridge.request('providers.login.initOAuth', {
         cwd,
-        providerId: provider.id as 'github-copilot' | 'antigravity' | 'qwen',
+        providerId: provider.id as OAuthProviderId,
       });
 
       if (!initResult.success) {
@@ -313,7 +311,7 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
 
       setOauthLoading(false);
       setOauthState({
-        providerId: provider.id as 'github-copilot' | 'antigravity',
+        providerId: provider.id as OAuthProviderId,
         authUrl: initResult.data.authUrl,
         userCode: initResult.data.userCode,
         oauthSessionId: initResult.data.oauthSessionId,
@@ -473,7 +471,6 @@ export const LoginSelect: React.FC<LoginSelectProps> = ({
           ? 'Qwen Authorization'
           : 'Antigravity Authorization';
     const waitingMessage =
-      oauthState.providerId === 'antigravity' ||
       oauthState.providerId === 'qwen'
         ? 'Waiting for authorization in browser...'
         : 'Waiting for authorization...';

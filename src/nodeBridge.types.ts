@@ -537,7 +537,7 @@ type ProvidersListOutput = {
 
 type ProvidersLoginInitOAuthInput = {
   cwd: string;
-  providerId: 'github-copilot' | 'antigravity';
+  providerId: 'github-copilot' | 'qwen';
   timeout?: number;
 };
 type ProvidersLoginInitOAuthOutput =
@@ -553,7 +553,7 @@ type ProvidersLoginInitOAuthOutput =
 
 type ProvidersLoginCompleteOAuthInput = {
   cwd: string;
-  providerId: 'github-copilot' | 'antigravity';
+  providerId: 'github-copilot' | 'qwen';
   oauthSessionId: string;
   code: string;
 };

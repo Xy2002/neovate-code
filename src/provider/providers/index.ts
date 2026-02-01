@@ -43,7 +43,6 @@ export { xiaomiProvider } from './xiaomi';
 export { cerebrasProvider } from './cerebras';
 export { huggingfaceProvider } from './huggingface';
 export { poeProvider } from './poe';
-export { antigravityProvider } from './antigravity';
 export { nvidiaProvider } from './nvidia';
 export { canopywaveProvider } from './canopywave';
 export { modelwatchProvider } from './modelwatch';
@@ -77,7 +76,6 @@ import { xiaomiProvider } from './xiaomi';
 import { cerebrasProvider } from './cerebras';
 import { huggingfaceProvider } from './huggingface';
 import { poeProvider } from './poe';
-import { antigravityProvider } from './antigravity';
 import { nvidiaProvider } from './nvidia';
 import { canopywaveProvider } from './canopywave';
 import { modelwatchProvider } from './modelwatch';
@@ -112,7 +110,6 @@ export const providers: ProvidersMap = {
   cerebras: cerebrasProvider,
   huggingface: huggingfaceProvider,
   poe: poeProvider,
-  antigravity: antigravityProvider,
   nvidia: nvidiaProvider,
   canopywave: canopywaveProvider,
   modelwatch: modelwatchProvider,
