@@ -31,23 +31,25 @@ export function registerModelsHandlers(
     const nullModels: { providerId: string; modelId: string }[] = [];
     const groupedModels = Object.values(
       providers as Record<string, Provider>,
-    ).map((provider) => ({
-      provider: provider.name,
-      providerId: provider.id,
-      models: Object.entries(provider.models)
-        .filter(([modelId, model]) => {
-          if (model == null) {
-            nullModels.push({ providerId: provider.id, modelId });
-            return false;
-          }
-          return true;
-        })
-        .map(([modelId, model]) => ({
-          name: (model as ModelData).name,
-          modelId: modelId,
-          value: `${provider.id}/${modelId}`,
-        })),
-    }));
+    ).map((provider) => {
+      return {
+        provider: provider.name,
+        providerId: provider.id,
+        models: Object.entries(provider.models || {})
+          .filter(([modelId, model]) => {
+            if (model == null) {
+              nullModels.push({ providerId: provider.id, modelId });
+              return false;
+            }
+            return true;
+          })
+          .map(([modelId, model]) => ({
+            name: (model as ModelData).name,
+            modelId: modelId,
+            value: `${provider.id}/${modelId}`,
+          })),
+      };
+    });
     return {
       success: true,
       data: {
