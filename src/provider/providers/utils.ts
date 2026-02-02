@@ -170,7 +170,6 @@ export const createModelCreator = (
         })(modelId);
       case ApiFormat._OpenRouter:
         return createOpenRouter({
-          name,
           apiKey,
           fetch: customFetch,
           headers: {

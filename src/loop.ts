@@ -466,9 +466,11 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
                 error,
                 stack: error.stack,
                 retriesAttempted: retryCount,
-                ...(parsedResponseBody?.error?.metadata && {
-                  metadata: parsedResponseBody.error.metadata,
-                }),
+                ...(parsedResponseBody?.error?.metadata
+                  ? {
+                      metadata: parsedResponseBody.error.metadata,
+                    }
+                  : {}),
               },
             },
           };
