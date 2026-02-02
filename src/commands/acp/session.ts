@@ -9,10 +9,12 @@ import type {
   SessionUpdate,
 } from '@agentclientprotocol/sdk';
 import type { LanguageModelV2StreamPart } from '@ai-sdk/provider';
-import type { MessageBus } from '../../messageBus';
 import type { NormalizedMessage } from '../../message';
-import type { ApprovalCategory, ToolUse } from '../../tool';
+import type { MessageBus } from '../../messageBus';
 import type { SlashCommand } from '../../slash-commands/types';
+import type { ApprovalCategory, ToolUse } from '../../tool';
+import { safeParseJson } from '../../utils/safeParseJson';
+import { ToolCallHistory } from './toolCallHistory';
 import {
   extractToolResultParts,
   fromACP,
@@ -21,10 +23,17 @@ import {
   isSlashCommand,
   mapApprovalCategory,
   parseSlashCommand,
-  safeParseJson,
   toACPToolContent,
 } from './utils/messageAdapter';
 import { createACPPlugin } from './plugin';
+
+/**
+ * Permission rule for a specific tool/category combination
+ */
+type PermissionRule = {
+  decision: 'allow' | 'reject';
+  timestamp: number;
+};
 
 /**
  * ACPSession wraps a Neovate session and handles ACP protocol events
@@ -32,6 +41,10 @@ import { createACPPlugin } from './plugin';
 export class ACPSession {
   private pendingPrompt: AbortController | null = null;
   private readonly defaultCwd: string = process.cwd();
+  // Store permission rules: key is `${toolName}:${category}`
+  private permissionRules: Map<string, PermissionRule> = new Map();
+  // Store tool call history
+  private toolCallHistory: ToolCallHistory = new ToolCallHistory(100);
 
   constructor(
     private readonly id: string,
@@ -97,6 +110,16 @@ export class ACPSession {
   }
 
   /**
+   * Get permission rule key for caching decisions
+   */
+  private getPermissionRuleKey(
+    toolName: string,
+    category?: ApprovalCategory,
+  ): string {
+    return `${toolName}:${category || 'default'}`;
+  }
+
+  /**
    * Initialize permission approval handler
    */
   private async initPermission() {
@@ -105,6 +128,9 @@ export class ACPSession {
       async (data: { toolUse: ToolUse; category?: ApprovalCategory }) => {
         const { toolUse, category } = data;
 
+        // Check if there's a stored permission rule for this tool/category
+        const ruleKey = this.getPermissionRuleKey(toolUse.name, category);
+        const existingRule = this.permissionRules.get(ruleKey);
         const permissionResponse = await this.connection.requestPermission({
           sessionId: this.id,
           toolCall: {
@@ -125,19 +151,80 @@ export class ACPSession {
           ],
         });
 
-        if (permissionResponse.outcome.outcome === 'cancelled') {
-          return { approved: false };
+        if (existingRule) {
+          // Return cached decision without prompting
+          return { approved: existingRule.decision === 'allow' };
         }
+        try {
+          const targetUpdate = this.toolCallHistory.get(toolUse.callId);
+          const permissionResponse = await this.connection.requestPermission({
+            sessionId: this.id,
+            toolCall: {
+              title: targetUpdate?.title ?? toolUse.name,
+              toolCallId: toolUse.callId,
+              content: targetUpdate?.content,
+            },
+            options: [
+              {
+                kind: 'allow_once',
+                name: 'Allow once',
+                optionId: 'allow_once',
+              },
+              {
+                kind: 'allow_always',
+                name: 'Always allow',
+                optionId: 'allow_always',
+              },
+              {
+                kind: 'reject_once',
+                name: 'Reject once',
+                optionId: 'reject_once',
+              },
+              {
+                kind: 'reject_always',
+                name: 'Always reject',
+                optionId: 'reject_always',
+              },
+            ],
+          });
 
-        switch (permissionResponse.outcome.optionId) {
-          case 'allow':
-            return { approved: true };
-          case 'reject':
+          if (permissionResponse.outcome.outcome === 'cancelled') {
             return { approved: false };
-          default:
-            throw new Error(
-              `Unexpected permission outcome ${permissionResponse.outcome}`,
-            );
+          }
+
+          const optionId = permissionResponse.outcome.optionId;
+
+          // Handle the different option types
+          switch (optionId) {
+            case 'allow_once':
+              return { approved: true };
+
+            case 'allow_always':
+              // Store the rule for future use
+              this.permissionRules.set(ruleKey, {
+                decision: 'allow',
+                timestamp: Date.now(),
+              });
+              return { approved: true };
+
+            case 'reject_once':
+              return { approved: false };
+
+            case 'reject_always':
+              // Store the rule for future use
+              this.permissionRules.set(ruleKey, {
+                decision: 'reject',
+                timestamp: Date.now(),
+              });
+              return { approved: false };
+
+            default:
+              throw new Error(
+                `Unexpected permission outcome ${permissionResponse.outcome.optionId}`,
+              );
+          }
+        } catch (e) {
+          console.log(e);
         }
       },
     );
@@ -253,9 +340,26 @@ export class ACPSession {
           } else if (chunk.toolName === 'write') {
             update.title = `write ${inputParams?.file_path ?? ''}`;
             update.kind = 'edit';
+            update.content = [
+              {
+                type: 'content',
+                content: {
+                  type: 'text',
+                  text: inputParams.content,
+                },
+              },
+            ];
           } else if (chunk.toolName === 'edit') {
             update.title = `edit ${inputParams?.file_path ?? ''}`;
             update.kind = 'edit';
+            update.content = [
+              {
+                type: 'diff',
+                newText: inputParams.new_string,
+                oldText: inputParams.old_string,
+                path: inputParams.file_path,
+              },
+            ];
           } else if (chunk.toolName === 'glob') {
             update.title = `glob ${inputParams?.pattern ?? ''}`;
             update.kind = 'search';
@@ -264,10 +368,15 @@ export class ACPSession {
             update.kind = 'search';
           }
 
-          this.connection.sessionUpdate({
-            sessionId: this.id,
-            update,
-          });
+          // Store tool call in history
+          this.toolCallHistory.add(chunk.toolCallId, update);
+
+          if (update.kind !== 'edit') {
+            this.connection.sessionUpdate({
+              sessionId: this.id,
+              update,
+            });
+          }
         }
 
         // Handle text deltas

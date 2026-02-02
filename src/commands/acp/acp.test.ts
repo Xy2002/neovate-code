@@ -3,12 +3,11 @@
  * Basic smoke tests for ACP protocol support
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   fromACP,
   getResultText,
   mapApprovalCategory,
-  safeParseJson,
 } from './utils/messageAdapter';
 
 describe('ACP Message Adapter', () => {
@@ -84,22 +83,6 @@ describe('ACP Message Adapter', () => {
     it('should default to read for unknown categories', () => {
       expect(mapApprovalCategory(undefined)).toBe('read');
       expect(mapApprovalCategory('unknown' as any)).toBe('read');
-    });
-  });
-
-  describe('safeParseJson', () => {
-    it('should parse valid JSON', () => {
-      const result = safeParseJson('{"foo":"bar"}');
-      expect(result).toEqual({ foo: 'bar' });
-    });
-    it('should return empty object for invalid JSON', () => {
-      const result = safeParseJson('not json');
-      expect(result).toEqual({});
-    });
-
-    it('should return empty object for empty string', () => {
-      const result = safeParseJson('');
-      expect(result).toEqual({});
     });
   });
 });

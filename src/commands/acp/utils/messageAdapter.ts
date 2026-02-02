@@ -8,12 +8,12 @@ import type {
   ToolCallContent,
   ToolKind,
 } from '@agentclientprotocol/sdk';
-import type { ApprovalCategory } from '../../../tool';
-import type { ToolResultPart, NormalizedMessage } from '../../../message';
+import type { NormalizedMessage, ToolResultPart } from '../../../message';
 import {
   isSlashCommand as neovateIsSlashCommand,
   parseSlashCommand as neovateParseSlashCommand,
 } from '../../../slashCommand';
+import type { ApprovalCategory } from '../../../tool';
 
 /**
  * Convert ACP ContentBlock[] to Neovate message format
@@ -170,14 +170,3 @@ export const isSlashCommand = neovateIsSlashCommand;
  * Reuses Neovate's built-in implementation
  */
 export const parseSlashCommand = neovateParseSlashCommand;
-
-/**
- * Safe JSON parse
- */
-export function safeParseJson(json: string): any {
-  try {
-    return JSON.parse(json);
-  } catch (_error) {
-    return {};
-  }
-}
