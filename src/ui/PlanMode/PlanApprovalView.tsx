@@ -14,7 +14,7 @@ import { useTerminalSize } from '../useTerminalSize';
 export interface PlanApprovalViewProps {
   planFilePath: string;
   planContent: string | null;
-  onApprove: (mode: 'autoEdit' | 'default') => void;
+  onApprove: (mode: 'autoEdit' | 'default' | 'yolo') => void;
   onDeny: (feedback: string) => void;
 }
 
@@ -25,11 +25,31 @@ export function PlanApprovalView({
   onDeny,
 }: PlanApprovalViewProps) {
   const { columns } = useTerminalSize();
-  const { productName } = useAppStore();
+  const { productName, approvalMode } = useAppStore();
   const isEditingRef = useRef(false);
 
-  const selectOptions = useMemo<SelectOption[]>(
-    () => [
+  const selectOptions = useMemo<SelectOption[]>(() => {
+    // When approvalMode is 'autoEdit' or 'yolo', merge both options into a single 'Yes'
+    // because edits will be auto-approved anyway
+    if (approvalMode === 'autoEdit' || approvalMode === 'yolo') {
+      return [
+        {
+          type: 'text',
+          value: approvalMode,
+          label: 'Yes',
+        },
+        {
+          type: 'input',
+          value: 'deny',
+          label: `Type here to tell ${productName} what to change`,
+          placeholder: `Type here to tell ${productName} what to change`,
+          initialValue: '',
+        },
+      ];
+    }
+
+    // Default mode: show both options
+    return [
       {
         type: 'text',
         value: 'autoEdit',
@@ -48,15 +68,14 @@ export function PlanApprovalView({
         placeholder: `Type here to tell ${productName} what to change`,
         initialValue: '',
       },
-    ],
-    [productName],
-  );
+    ];
+  }, [productName, approvalMode]);
 
   const handleChange = useCallback(
     (value: string | string[]) => {
       if (typeof value === 'string') {
-        if (value === 'autoEdit' || value === 'default') {
-          onApprove(value as 'autoEdit' | 'default');
+        if (value === 'autoEdit' || value === 'default' || value === 'yolo') {
+          onApprove(value as 'autoEdit' | 'default' | 'yolo');
           return;
         }
 
