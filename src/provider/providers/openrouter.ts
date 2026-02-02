@@ -1,6 +1,4 @@
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { ApiFormat, type Provider } from './types';
-import { getProviderApiKey } from './utils';
 
 export const openrouterProvider: Provider = {
   id: 'openrouter',
@@ -9,15 +7,16 @@ export const openrouterProvider: Provider = {
   name: 'OpenRouter',
   api: 'https://openrouter.ai/api/v1',
   doc: 'https://openrouter.ai/docs/models',
+  apiFormat: ApiFormat._OpenRouter,
   models: {
-    'anthropic/claude-3.5-sonnet': {},
-    'anthropic/claude-3.7-sonnet': {},
-    'anthropic/claude-sonnet-4': {},
-    'anthropic/claude-sonnet-4.5': {},
-    'anthropic/claude-haiku-4.5': {},
-    'anthropic/claude-opus-4': {},
-    'anthropic/claude-opus-4.1': {},
-    'anthropic/claude-opus-4.5': {},
+    'anthropic/claude-3.5-sonnet': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-3.7-sonnet': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-sonnet-4': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-sonnet-4.5': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-haiku-4.5': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-opus-4': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-opus-4.1': { apiFormat: ApiFormat.Anthropic },
+    'anthropic/claude-opus-4.5': { apiFormat: ApiFormat.Anthropic },
     'deepseek/deepseek-r1-0528': {},
     'deepseek/deepseek-chat-v3-0324': {},
     'deepseek/deepseek-chat-v3.1': {},
@@ -61,17 +60,5 @@ export const openrouterProvider: Provider = {
     'z-ai/glm-4.6v': {},
     'z-ai/glm-4.7': {},
     'minimax/minimax-m2': {},
-  },
-  apiFormat: ApiFormat.Anthropic,
-  createModel(name, provider, { customFetch }) {
-    const apiKey = getProviderApiKey(provider);
-    return createOpenRouter({
-      apiKey,
-      fetch: customFetch as typeof fetch,
-      headers: {
-        'X-Title': 'Neovate Code',
-        'HTTP-Referer': 'https://neovateai.dev/',
-      },
-    }).chat(name);
   },
 };

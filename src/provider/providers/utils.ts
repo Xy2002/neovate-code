@@ -12,6 +12,7 @@ import { ApiFormat, type Model, type Provider } from './types';
 import { createProxyFetch } from '../../utils/proxy';
 import { rotateApiKey } from '../../utils/apiKeyRotation';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
 /**
  * Inject proxy support into AI SDK configuration
@@ -167,6 +168,16 @@ export const createModelCreator = (
           apiKey,
           fetch: customFetch,
         })(modelId);
+      case ApiFormat._OpenRouter:
+        return createOpenRouter({
+          name,
+          apiKey,
+          fetch: customFetch,
+          headers: {
+            'X-Title': 'Neovate Code',
+            'HTTP-Referer': 'https://neovateai.dev/',
+          },
+        }).chat(modelId);
       default:
         assert(baseURL, 'baseURL is required');
         return createOpenAICompatible({

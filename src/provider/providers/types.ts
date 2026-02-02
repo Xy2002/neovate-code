@@ -66,6 +66,7 @@ export enum ApiFormat {
   OpenAI = 'openai',
   Responses = 'responses',
   Google = 'google',
+  _OpenRouter = '_openrouter',
 }
 
 export interface Provider {
