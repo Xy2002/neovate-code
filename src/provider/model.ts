@@ -144,7 +144,7 @@ function transformVariants(model: Model, provider: Provider) {
   const apiFormat = model.apiFormat || provider.apiFormat;
   const WIDELY_SUPPORTED_EFFORTS = ['low', 'medium', 'high'];
 
-  if (apiFormat === ApiFormat.Responses) {
+  if (provider.id === 'codex' || apiFormat === ApiFormat.Responses) {
     // https://v5.ai-sdk.dev/providers/ai-sdk-providers/openai
     if (id === 'gpt-5-pro') return {};
     const openaiEfforts = (() => {
