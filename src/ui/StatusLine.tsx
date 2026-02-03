@@ -27,7 +27,7 @@ function ThinkingIndicator() {
   if (!thinking) return null;
 
   const color =
-    thinking.effort === 'max'
+    thinking.effort === 'max' || thinking.effort === 'xhigh'
       ? UI_COLORS.CHAT_BORDER_THINKING_HARD
       : UI_COLORS.CHAT_BORDER_THINKING;
 

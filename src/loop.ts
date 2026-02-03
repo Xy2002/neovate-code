@@ -101,7 +101,7 @@ export type ResponseFormat =
       name?: string;
       description?: string;
     };
-export type ReasoningEffort = 'low' | 'medium' | 'high' | 'max';
+export type ReasoningEffort = 'low' | 'medium' | 'high' | 'max' | 'xhigh';
 export type ThinkingConfig = {
   effort: ReasoningEffort;
 };
