@@ -1,9 +1,14 @@
+import pathe from 'pathe';
 import z from 'zod';
 import type { Context } from '../../context';
 import type { MessageBus } from '../../messageBus';
 import { resolveModelWithContext } from '../../provider/model';
 import { query } from '../../query';
 import { listDirectory } from '../../utils/list';
+
+function replaceVars(url: string, vars: Record<string, string>): string {
+  return url.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '');
+}
 
 export function registerUtilsHandlers(
   messageBus: MessageBus,
@@ -261,5 +266,37 @@ export function registerUtilsHandlers(
     const installedApps = targetApps.filter(checkApp);
 
     return { success: true, data: { apps: installedApps } };
+  });
+
+  messageBus.registerHandler('utils.notify', async (data) => {
+    const { cwd, config } = data;
+
+    if (config === false) {
+      return { success: true };
+    }
+
+    if (typeof config === 'string' && /^https?:\/\//.test(config)) {
+      const vars = {
+        cwd,
+        name: pathe.basename(cwd),
+      };
+      const url = replaceVars(config, vars);
+      fetch(url).catch(() => {});
+      return { success: true };
+    }
+
+    const { playSound, beep, SOUND_PRESETS } = await import(
+      '../../utils/sound'
+    );
+    const soundName =
+      typeof config === 'string' ? config : SOUND_PRESETS.warning;
+
+    try {
+      await playSound(soundName);
+    } catch {
+      beep();
+    }
+
+    return { success: true };
   });
 }

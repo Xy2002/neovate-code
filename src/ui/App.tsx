@@ -13,6 +13,7 @@ import { QueueDisplay } from './QueueDisplay';
 import { useAppStore } from './store';
 import { TerminalSizeProvider } from './TerminalSizeContext';
 import { TranscriptModeIndicator } from './TranscriptModeIndicator';
+import { useNotification } from './useNotification';
 import { useTerminalRefresh } from './useTerminalRefresh';
 
 function SlashCommandJSX() {
@@ -22,6 +23,7 @@ function SlashCommandJSX() {
 
 export function App() {
   const { forceRerender } = useTerminalRefresh();
+  useNotification();
   const {
     forkModalVisible,
     fork,

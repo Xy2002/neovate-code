@@ -1169,6 +1169,13 @@ type UtilsPlaySoundInput = {
 
 type UtilsPlaySoundOutput = SuccessResponse | ErrorResponse;
 
+type UtilsNotifyInput = {
+  cwd: string;
+  config: string | false | undefined;
+};
+
+type UtilsNotifyOutput = SuccessResponse;
+
 // ============================================================================
 // UI Bridge Handlers (from uiBridge.ts)
 // ============================================================================
@@ -1466,6 +1473,10 @@ export type HandlerMap = {
   'utils.playSound': {
     input: UtilsPlaySoundInput;
     output: UtilsPlaySoundOutput;
+  };
+  'utils.notify': {
+    input: UtilsNotifyInput;
+    output: UtilsNotifyOutput;
   };
 
   // UI Bridge handlers
