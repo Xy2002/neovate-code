@@ -19,6 +19,7 @@ export const iflowProvider: Provider = {
     'glm-4.7': {},
     'minimax-m2.1': {},
     'qwen3-max': {},
+    'kimi-k2.5': {},
   },
   headers: {
     'user-agent': 'iFlow-Cli',
