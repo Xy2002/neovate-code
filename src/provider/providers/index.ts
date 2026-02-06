@@ -82,6 +82,7 @@ import { canopywaveProvider } from './canopywave';
 import { modelwatchProvider } from './modelwatch';
 import { qwenProvider } from './qwen';
 import { codexProvider } from './codex';
+import { kimiCodingPlanProvider } from './kimi-coding-plan';
 // import { opencodeZenProvider } from './opencode-zen';
 
 // Combined providers map
@@ -104,6 +105,7 @@ export const providers: ProvidersMap = {
   volcengine: volcengineProvider,
   'zai-coding-plan': zaiCodingPlanProvider,
   'zhipuai-coding-plan': zhipuaiCodingPlanProvider,
+  'kimi-coding-plan': kimiCodingPlanProvider,
   zhipuai: zhipuaiProvider,
   zenmux: zenmuxProvider,
   minimax: minimaxProvider,
